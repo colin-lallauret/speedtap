@@ -4,6 +4,8 @@ import { scoreService } from '../lib/scoreService.js';
 
 function Leaderboard({ onBack }) {
   const [topScores, setTopScores] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -20,11 +22,16 @@ function Leaderboard({ onBack }) {
   useEffect(() => {
     const loadScores = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const scores = await scoreService.getTopScores();
         setTopScores(scores);
       } catch (error) {
         console.error('Erreur lors du chargement des scores:', error);
+        setError('Impossible de charger les scores. Veuillez réessayer.');
         setTopScores([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -82,7 +89,25 @@ function Leaderboard({ onBack }) {
           Top 3 des meilleurs scores
         </p>
 
-        {topScores.length === 0 ? (
+        {loading ? (
+          <div className="bg-white rounded-2xl shadow-xl p-12 mb-8">
+            <div className="text-gray-500 text-lg">
+              Chargement des scores...
+            </div>
+          </div>
+        ) : error ? (
+          <div className="bg-white rounded-2xl shadow-xl p-12 mb-8">
+            <div className="text-red-500 text-lg">
+              {error}
+            </div>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Réessayer
+            </button>
+          </div>
+        ) : topScores.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-xl p-12 mb-8">
             <div className="text-gray-500 text-lg">
               Aucun score enregistré pour le moment.

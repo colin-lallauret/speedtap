@@ -15,7 +15,7 @@ class ScoreService {
 
     // Essayer de sauvegarder en ligne avec Supabase
     try {
-      const success = await saveScoreToDatabase(score.wpm, score.accuracy, score.playerName)
+      const success = await saveScoreToDatabase(score.wmp, score.accuracy, score.playerName)
       if (success) {
         console.log('Score sauvegardé dans Supabase et localement')
       } else {
@@ -80,7 +80,7 @@ class ScoreService {
       if (onlineScores && onlineScores.length > 0) {
         // Convertir le format Supabase vers notre format
         return onlineScores.map(score => ({
-          wpm: score.wmp,
+          wpm: score.wpm,
           accuracy: score.accuracy,
           playerName: score.player_name,
           date: new Date(score.created_at).getTime()
