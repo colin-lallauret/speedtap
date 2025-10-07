@@ -15,14 +15,15 @@ class ScoreService {
 
     // Essayer de sauvegarder en ligne avec Supabase
     try {
-      const success = await saveScoreToDatabase(score.wmp, score.accuracy, score.playerName)
+      console.log('Tentative de sauvegarde:', score)
+      const success = await saveScoreToDatabase(score.wpm, score.accuracy, score.playerName)
       if (success) {
-        console.log('Score sauvegardé dans Supabase et localement')
+        console.log('✅ Score sauvegardé dans Supabase et localement')
       } else {
-        console.log('Score sauvegardé uniquement localement')
+        console.log('⚠️ Score sauvegardé uniquement localement')
       }
     } catch (error) {
-      console.log('Erreur réseau, score sauvegardé uniquement localement')
+      console.log('❌ Erreur réseau, score sauvegardé uniquement localement:', error)
     }
   }
 
@@ -90,8 +91,9 @@ class ScoreService {
       console.log('Erreur récupération Supabase, utilisation des scores locaux')
     }
 
-    // Fallback sur les scores locaux
-    return this.getLocalScores()
+    // Fallback sur les scores locaux (commenté pour forcer Supabase uniquement)
+    // return this.getLocalScores()
+    return [] // Retourner un tableau vide si pas de scores Supabase
   }
 
   getLocalScores() {
@@ -102,6 +104,12 @@ class ScoreService {
       console.error('Erreur localStorage:', error)
       return []
     }
+  }
+
+  // Méthode debug pour vider tous les scores (local + affichage)
+  clearAllScores() {
+    localStorage.removeItem('speedTypingScores')
+    console.log('Scores locaux effacés')
   }
 }
 
