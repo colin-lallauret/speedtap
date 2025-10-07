@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, KeySquare } from 'lucide-react';
 
 function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRestart, hasError }) {
   const textRef = useRef(null);
@@ -9,11 +9,15 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
   const [textLines, setTextLines] = useState([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [displayStartLine, setDisplayStartLine] = useState(0);
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
   const MAX_VISIBLE_LINES = 4;
   useEffect(() => {
     if (!isGameActive) return;
 
     const handleKeyDown = (e) => {
+      // Détecter l'état de Caps Lock
+      setIsCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'));
+
       if (e.key === 'Backspace') {
         e.preventDefault();
         return;
@@ -425,7 +429,17 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 h-[200px] flex items-start">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 h-[200px] flex items-start relative">
+        {/* Indicateur Caps Lock avec animation fluide */}
+        <div 
+          className={`absolute top-4 right-4 flex items-center gap-2 bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
+            isCapsLockOn ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
+          }`}
+        >
+          <KeySquare className="w-5 h-5" />
+          <span className="text-sm font-semibold">Caps Lock</span>
+        </div>
+
         <div className="select-none font-mono w-full max-w-full overflow-hidden h-full">
           <div className="h-full overflow-hidden">
             {renderText()}
