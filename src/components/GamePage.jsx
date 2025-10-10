@@ -42,6 +42,7 @@ const SENTENCES = [
 
 
 function GamePage({ onBackToHome, onShowLeaderboard }) {
+  const [gameKey, setGameKey] = useState(0); // Pour forcer le remount des composants
   const [text, setText] = useState('');
   const [userInput, setUserInput] = useState('');
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
@@ -153,6 +154,7 @@ function GamePage({ onBackToHome, onShowLeaderboard }) {
   };
 
   const handleRestart = () => {
+    // Reset complet de tous les états à leurs valeurs initiales
     const randomSentence = SENTENCES[Math.floor(Math.random() * SENTENCES.length)];
     setText(randomSentence);
     setUserInput('');
@@ -165,6 +167,17 @@ function GamePage({ onBackToHome, onShowLeaderboard }) {
     setTotalChars(0);
     setHasError(false);
     setFinalScores({ wpm: 0, accuracy: 0 });
+    
+    // Forcer le remount complet des composants
+    setGameKey(prev => prev + 1);
+    
+    // Force le focus sur la zone de saisie pour recommencer immédiatement
+    setTimeout(() => {
+      const textInput = document.querySelector('textarea, input[type="text"]');
+      if (textInput) {
+        textInput.focus();
+      }
+    }, 100);
   };
 
   if (showNameInput) {
@@ -193,6 +206,7 @@ function GamePage({ onBackToHome, onShowLeaderboard }) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 py-12">
       <div className="w-full">
         <TypingArea
+          key={gameKey}
           text={text}
           userInput={userInput}
           onKeyPress={handleKeyPress}

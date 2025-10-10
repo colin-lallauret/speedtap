@@ -11,6 +11,22 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
   const [displayStartLine, setDisplayStartLine] = useState(0);
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
   const MAX_VISIBLE_LINES = 4;
+  // Réinitialiser les états locaux quand le texte change (restart)
+  useEffect(() => {
+    setCursorPosition({ left: 0, top: 0 });
+    setIsTyping(false);
+    setCurrentLineIndex(0);
+    setDisplayStartLine(0);
+    setIsCapsLockOn(false);
+    setTextLines([]); // Reset les lignes de texte aussi
+    
+    // Clear timeout si existe
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+  }, [text]); // Se déclenche quand le texte change
+
   useEffect(() => {
     if (!isGameActive) return;
 
