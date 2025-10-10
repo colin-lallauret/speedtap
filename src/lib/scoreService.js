@@ -99,7 +99,7 @@ class ScoreService {
   getLocalScores() {
     try {
       const scores = JSON.parse(localStorage.getItem('speedTypingScores') || '[]')
-      return scores.slice(0, 3) // Top 3 local
+      return scores.slice(0, 10) // Top 10 local
     } catch (error) {
       console.error('Erreur localStorage:', error)
       return []

@@ -65,7 +65,7 @@ export const getTopScores = async () => {
       .select('wpm, accuracy, player_name, created_at')
       .order('wpm', { ascending: false })
       .order('accuracy', { ascending: false })
-      .limit(3)
+      .limit(10)
 
     if (error) {
       console.error('Erreur lors de la récupération:', error)

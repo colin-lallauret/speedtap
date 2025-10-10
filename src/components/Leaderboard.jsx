@@ -86,7 +86,7 @@ function Leaderboard({ onBack }) {
         </h1>
 
         <p className="text-xl text-gray-600 mb-12">
-          Top 3 des meilleurs scores
+          Top 10 des meilleurs scores
         </p>
 
         {loading ? (
@@ -117,72 +117,118 @@ function Leaderboard({ onBack }) {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {topScores.map((score, index) => (
-              <div
-                key={index}
-                className={`bg-gradient-to-br ${getPodiumColor(index + 1)} rounded-2xl shadow-xl p-6 text-white transform ${
-                  index === 0 ? 'md:scale-110' : ''
-                }`}
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="bg-white bg-opacity-20 p-3 rounded-full">
-                    {getPodiumIcon(index + 1)}
+          <>
+            {/* Top 3 - Affichage podium */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              {topScores.slice(0, 3).map((score, index) => (
+                <div
+                  key={index}
+                  className={`bg-gradient-to-br ${getPodiumColor(index + 1)} rounded-2xl shadow-xl p-6 text-white transform ${
+                    index === 0 ? 'md:scale-110' : ''
+                  }`}
+                >
+                  <div className="flex justify-center mb-4">
+                    <div className="bg-white bg-opacity-20 p-3 rounded-full">
+                      {getPodiumIcon(index + 1)}
+                    </div>
+                  </div>
+
+                  <div className="text-2xl font-bold mb-2">
+                    #{index + 1}
+                  </div>
+
+                  {score.playerName && (
+                    <div className="text-lg font-semibold mb-3 opacity-90">
+                      {score.playerName}
+                    </div>
+                  )}
+
+                  <div className="text-4xl font-bold mb-2">
+                    {score.wpm.toFixed(1)}
+                  </div>
+                  <div className="text-sm opacity-90 mb-3">
+                    mots par minute
+                  </div>
+
+                  <div className="text-2xl font-semibold mb-2">
+                    {score.accuracy.toFixed(1)}%
+                  </div>
+                  <div className="text-sm opacity-90 mb-4">
+                    précision
+                  </div>
+
+                  <div className="text-xs opacity-75">
+                    {formatDate(score.date)}
                   </div>
                 </div>
+              ))}
 
-                <div className="text-2xl font-bold mb-2">
-                  #{index + 1}
-                </div>
-
-                {score.playerName && (
-                  <div className="text-lg font-semibold mb-3 opacity-90">
-                    {score.playerName}
+              {/* Remplir les positions vides du podium */}
+              {Array.from({ length: Math.max(0, 3 - topScores.length) }, (_, index) => (
+                <div
+                  key={`empty-${index}`}
+                  className="bg-gray-200 rounded-2xl shadow-xl p-6 text-gray-400 border-2 border-dashed border-gray-300"
+                >
+                  <div className="flex justify-center mb-4">
+                    <div className="bg-gray-100 p-3 rounded-full">
+                      {getPodiumIcon(topScores.length + index + 1)}
+                    </div>
                   </div>
-                )}
 
-                <div className="text-4xl font-bold mb-2">
-                  {score.wpm.toFixed(1)}
-                </div>
-                <div className="text-sm opacity-90 mb-3">
-                  mots par minute
-                </div>
+                  <div className="text-2xl font-bold mb-4">
+                    #{topScores.length + index + 1}
+                  </div>
 
-                <div className="text-2xl font-semibold mb-2">
-                  {score.accuracy.toFixed(1)}%
+                  <div className="text-lg">
+                    Position libre
+                  </div>
                 </div>
-                <div className="text-sm opacity-90 mb-4">
-                  précision
-                </div>
+              ))}
+            </div>
 
-                <div className="text-xs opacity-75">
-                  {formatDate(score.date)}
+            {/* Top 4-10 - Affichage tableau */}
+            {topScores.length > 3 && (
+              <div className="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden">
+                <div className="bg-gray-50 px-6 py-4 border-b">
+                  <h3 className="text-xl font-semibold text-gray-800">Classement complet</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Rang</th>
+                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Joueur</th>
+                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600">WPM</th>
+                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600">Précision</th>
+                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {topScores.slice(3).map((score, index) => (
+                        <tr key={index + 3} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                            #{index + 4}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900">
+                            {score.playerName || 'Anonyme'}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-right font-semibold text-blue-600">
+                            {score.wpm.toFixed(1)}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-right font-medium text-green-600">
+                            {score.accuracy.toFixed(1)}%
+                          </td>
+                          <td className="px-6 py-4 text-sm text-right text-gray-500">
+                            {formatDate(score.date)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-            ))}
-
-            {/* Remplir les positions vides */}
-            {Array.from({ length: 3 - topScores.length }, (_, index) => (
-              <div
-                key={`empty-${index}`}
-                className="bg-gray-200 rounded-2xl shadow-xl p-6 text-gray-400 border-2 border-dashed border-gray-300"
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="bg-gray-100 p-3 rounded-full">
-                    {getPodiumIcon(topScores.length + index + 1)}
-                  </div>
-                </div>
-
-                <div className="text-2xl font-bold mb-4">
-                  #{topScores.length + index + 1}
-                </div>
-
-                <div className="text-lg">
-                  Position libre
-                </div>
-              </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
 
         <button
