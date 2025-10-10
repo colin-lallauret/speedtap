@@ -4,8 +4,10 @@ import { scoreService } from '../lib/scoreService.js';
 
 function Leaderboard({ onBack }) {
   const [topScores, setTopScores] = useState([]);
+  const [todayScores, setTodayScores] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [timeUntilReset, setTimeUntilReset] = useState('');
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -24,18 +26,41 @@ function Leaderboard({ onBack }) {
       try {
         setLoading(true);
         setError(null);
-        const scores = await scoreService.getTopScores();
-        setTopScores(scores);
+        
+        // Charger les scores de tous les temps et du jour en parallèle
+        const [allTimeScores, dailyScores] = await Promise.all([
+          scoreService.getTopScores(),
+          scoreService.getTodayTopScores()
+        ]);
+        
+        setTopScores(allTimeScores || []);
+        setTodayScores(dailyScores || []);
       } catch (error) {
         console.error('Erreur lors du chargement des scores:', error);
         setError('Impossible de charger les scores. Veuillez réessayer.');
         setTopScores([]);
+        setTodayScores([]);
       } finally {
         setLoading(false);
       }
     };
 
     loadScores();
+  }, []);
+
+  // Timer pour le reset des scores 24h
+  useEffect(() => {
+    const updateTimer = () => {
+      setTimeUntilReset(calculateTimeUntilReset());
+    };
+
+    // Mettre à jour immédiatement
+    updateTimer();
+
+    // Puis mettre à jour toutes les secondes
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const getPodiumIcon = (position) => {
@@ -72,6 +97,21 @@ function Leaderboard({ onBack }) {
     });
   };
 
+  const calculateTimeUntilReset = () => {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Minuit du jour suivant
+    
+    const diff = tomorrow.getTime() - now.getTime();
+    
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
       <div className="text-center max-w-4xl w-full">
@@ -85,8 +125,8 @@ function Leaderboard({ onBack }) {
           Classement
         </h1>
 
-        <p className="text-xl text-gray-600 mb-12">
-          Top 10 des meilleurs scores
+        <p className="text-xl text-gray-600 mb-8">
+          Classements des meilleurs scores
         </p>
 
         {loading ? (
@@ -118,7 +158,100 @@ function Leaderboard({ onBack }) {
           </div>
         ) : (
           <>
-            {/* Top 3 - Affichage podium */}
+            {/* Top 3 du jour - Dernières 24h */}
+            <div className="mb-12">
+              <div className="flex flex-col items-center justify-center gap-2 mb-6">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                  🔥 DERNIÈRES 24H
+                </div>
+                <div className="bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-mono">
+                  ⏰ Reset dans {timeUntilReset}
+                </div>
+              </div>
+              
+              {!todayScores || todayScores.length === 0 ? (
+                <div className="bg-white rounded-xl shadow-lg p-6 mb-8 text-center">
+                  <div className="text-gray-500 text-lg">
+                    Aucun score aujourd'hui
+                  </div>
+                  <div className="text-gray-400 text-sm mt-2">
+                    Soyez le premier à jouer aujourd'hui !
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                  {(todayScores || []).slice(0, 3).map((score, index) => (
+                    <div
+                      key={`today-${index}`}
+                      className={`bg-gradient-to-br ${getPodiumColor(index + 1)} rounded-xl shadow-lg p-4 text-white transform ${
+                        index === 0 ? 'md:scale-105' : ''
+                      }`}
+                    >
+                      <div className="flex justify-center mb-3">
+                        <div className="bg-white bg-opacity-20 p-2 rounded-full">
+                          {getPodiumIcon(index + 1)}
+                        </div>
+                      </div>
+
+                      <div className="text-lg font-bold mb-1 text-center">
+                        #{index + 1}
+                      </div>
+
+                      {score.playerName && (
+                        <div className="text-sm font-semibold mb-2 opacity-90 text-center">
+                          {score.playerName}
+                        </div>
+                      )}
+
+                      <div className="text-2xl font-bold mb-1 text-center">
+                        {score.wpm.toFixed(1)}
+                      </div>
+                      <div className="text-xs opacity-90 mb-2 text-center">
+                        mots par minute
+                      </div>
+
+                      <div className="text-lg font-semibold mb-1 text-center">
+                        {score.accuracy.toFixed(1)}%
+                      </div>
+                      <div className="text-xs opacity-90 text-center">
+                        précision
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Remplir les positions vides du podium du jour */}
+                  {Array.from({ length: Math.max(0, 3 - (todayScores?.length || 0)) }, (_, index) => (
+                    <div
+                      key={`today-empty-${index}`}
+                      className="bg-gray-100 rounded-xl shadow-lg p-4 text-gray-400 border-2 border-dashed border-gray-300"
+                    >
+                      <div className="flex justify-center mb-3">
+                        <div className="bg-gray-200 p-2 rounded-full">
+                          {getPodiumIcon(todayScores.length + index + 1)}
+                        </div>
+                      </div>
+
+                      <div className="text-lg font-bold mb-3 text-center">
+                        #{(todayScores?.length || 0) + index + 1}
+                      </div>
+
+                      <div className="text-sm text-center">
+                        Position libre
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Séparateur */}
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <div className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                🏆 CLASSEMENT GÉNÉRAL
+              </div>
+            </div>
+
+            {/* Top 3 - Affichage podium de tous les temps */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               {topScores.slice(0, 3).map((score, index) => (
                 <div
@@ -189,9 +322,6 @@ function Leaderboard({ onBack }) {
             {/* Top 4-10 - Affichage tableau */}
             {topScores.length > 3 && (
               <div className="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden">
-                <div className="bg-gray-50 px-6 py-4 border-b">
-                  <h3 className="text-xl font-semibold text-gray-800">Classement complet</h3>
-                </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-100">

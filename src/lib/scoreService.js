@@ -1,5 +1,5 @@
 // Service de gestion des scores avec fallback localStorage
-import { saveScoreToDatabase, getTopScores } from './supabase.js'
+import { saveScoreToDatabase, getTopScores, getTodayTopScores } from './supabase.js'
 
 class ScoreService {
   async saveScore(wpm, accuracy, playerName = null) {
@@ -102,6 +102,54 @@ class ScoreService {
       return scores.slice(0, 10) // Top 10 local
     } catch (error) {
       console.error('Erreur localStorage:', error)
+      return []
+    }
+  }
+
+  async getTodayTopScores() {
+    try {
+      // Essayer de récupérer les scores du jour depuis Supabase
+      const onlineScores = await getTodayTopScores()
+      
+      if (onlineScores && onlineScores.length > 0) {
+        // Convertir le format Supabase vers notre format
+        return onlineScores.map(score => ({
+          wpm: score.wpm,
+          accuracy: score.accuracy,
+          playerName: score.player_name,
+          date: new Date(score.created_at).getTime()
+        }))
+      }
+    } catch (error) {
+      console.log('Erreur récupération scores du jour Supabase, utilisation des scores locaux récents')
+    }
+
+    // Fallback sur les scores locaux des dernières 24h
+    const localTodayScores = this.getLocalTodayScores()
+    return localTodayScores || [] // S'assurer de toujours retourner un tableau
+  }
+
+  getLocalTodayScores() {
+    try {
+      const scores = JSON.parse(localStorage.getItem('speedTypingScores') || '[]')
+      
+      // S'assurer que scores est un tableau
+      if (!Array.isArray(scores)) {
+        return []
+      }
+      
+      const yesterday = Date.now() - (24 * 60 * 60 * 1000) // 24h en millisecondes
+      
+      // Filtrer les scores des dernières 24h et prendre le top 3
+      const todayScores = scores.filter(score => 
+        score && 
+        typeof score.date === 'number' && 
+        score.date >= yesterday
+      )
+      
+      return todayScores.slice(0, 3)
+    } catch (error) {
+      console.error('Erreur localStorage pour les scores du jour:', error)
       return []
     }
   }

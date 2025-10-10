@@ -78,3 +78,34 @@ export const getTopScores = async () => {
     return []
   }
 }
+
+export const getTodayTopScores = async () => {
+  if (!supabase) {
+    console.log('Supabase non configuré - utilisation des scores locaux')
+    return []
+  }
+
+  try {
+    // Calculer la date d'il y a 24h
+    const yesterday = new Date()
+    yesterday.setHours(yesterday.getHours() - 24)
+
+    const { data, error } = await supabase
+      .from('scores')
+      .select('wpm, accuracy, player_name, created_at')
+      .gte('created_at', yesterday.toISOString())
+      .order('wpm', { ascending: false })
+      .order('accuracy', { ascending: false })
+      .limit(3)
+
+    if (error) {
+      console.error('Erreur lors de la récupération des scores du jour:', error)
+      return []
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Erreur réseau pour les scores du jour:', error)
+    return []
+  }
+}
