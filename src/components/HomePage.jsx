@@ -50,6 +50,12 @@ function HomePage({ onStart, onShowLeaderboard }) {
         <p className="text-gray-500 text-sm mt-6">
           Appuyez sur Entree pour commencer
         </p>
+
+        <div className="mt-12 pt-6 border-t border-gray-200">
+          <p className="text-gray-400 text-xs">
+            Fait par <span className="font-semibold text-gray-600">Colin</span>
+          </p>
+        </div>
       </div>
     </div>
   );
