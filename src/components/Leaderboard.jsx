@@ -113,46 +113,46 @@ function Leaderboard({ onBack }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4 transition-colors duration-300">
       <div className="text-center max-w-4xl w-full">
         <div className="mb-8 flex justify-center">
-          <div className="bg-white p-6 rounded-full shadow-lg">
+          <div className="bg-white dark:bg-gray-700 p-6 rounded-full shadow-lg">
             <Trophy className="w-16 h-16 text-yellow-500" />
           </div>
         </div>
 
-        <h1 className="text-5xl font-bold text-gray-900 mb-3">
+        <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-3">
           Classement
         </h1>
 
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
           Classements des meilleurs scores
         </p>
 
         {loading ? (
-          <div className="bg-white rounded-2xl shadow-xl p-12 mb-8">
-            <div className="text-gray-500 text-lg">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 mb-8">
+            <div className="text-gray-500 dark:text-gray-400 text-lg">
               Chargement des scores...
             </div>
           </div>
         ) : error ? (
-          <div className="bg-white rounded-2xl shadow-xl p-12 mb-8">
-            <div className="text-red-500 text-lg">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 mb-8">
+            <div className="text-red-500 dark:text-red-400 text-lg">
               {error}
             </div>
             <button 
               onClick={() => window.location.reload()} 
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="mt-4 px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded hover:bg-blue-600 dark:hover:bg-blue-700"
             >
               Réessayer
             </button>
           </div>
         ) : topScores.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-xl p-12 mb-8">
-            <div className="text-gray-500 text-lg">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 mb-8">
+            <div className="text-gray-500 dark:text-gray-400 text-lg">
               Aucun score enregistré pour le moment.
             </div>
-            <div className="text-gray-400 text-sm mt-2">
+            <div className="text-gray-400 dark:text-gray-500 text-sm mt-2">
               Jouez une partie pour voir vos résultats ici !
             </div>
           </div>
@@ -170,11 +170,11 @@ function Leaderboard({ onBack }) {
               </div>
               
               {!todayScores || todayScores.length === 0 ? (
-                <div className="bg-white rounded-xl shadow-lg p-6 mb-8 text-center">
-                  <div className="text-gray-500 text-lg">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 text-center">
+                  <div className="text-gray-500 dark:text-gray-400 text-lg">
                     Aucun score aujourd'hui
                   </div>
-                  <div className="text-gray-400 text-sm mt-2">
+                  <div className="text-gray-400 dark:text-gray-500 text-sm mt-2">
                     Soyez le premier à jouer aujourd'hui !
                   </div>
                 </div>
@@ -223,10 +223,10 @@ function Leaderboard({ onBack }) {
                   {Array.from({ length: Math.max(0, 3 - (todayScores?.length || 0)) }, (_, index) => (
                     <div
                       key={`today-empty-${index}`}
-                      className="bg-gray-100 rounded-xl shadow-lg p-4 text-gray-400 border-2 border-dashed border-gray-300"
+                      className="bg-gray-100 dark:bg-gray-700 rounded-xl shadow-lg p-4 text-gray-400 dark:text-gray-500 border-2 border-dashed border-gray-300 dark:border-gray-600"
                     >
                       <div className="flex justify-center mb-3">
-                        <div className="bg-gray-200 p-2 rounded-full">
+                        <div className="bg-gray-200 dark:bg-gray-600 p-2 rounded-full">
                           {getPodiumIcon(todayScores.length + index + 1)}
                         </div>
                       </div>
@@ -300,10 +300,10 @@ function Leaderboard({ onBack }) {
               {Array.from({ length: Math.max(0, 3 - topScores.length) }, (_, index) => (
                 <div
                   key={`empty-${index}`}
-                  className="bg-gray-200 rounded-2xl shadow-xl p-6 text-gray-400 border-2 border-dashed border-gray-300"
+                  className="bg-gray-200 dark:bg-gray-700 rounded-2xl shadow-xl p-6 text-gray-400 dark:text-gray-500 border-2 border-dashed border-gray-300 dark:border-gray-600"
                 >
                   <div className="flex justify-center mb-4">
-                    <div className="bg-gray-100 p-3 rounded-full">
+                    <div className="bg-gray-100 dark:bg-gray-600 p-3 rounded-full">
                       {getPodiumIcon(topScores.length + index + 1)}
                     </div>
                   </div>
@@ -321,34 +321,34 @@ function Leaderboard({ onBack }) {
 
             {/* Top 4-10 - Affichage tableau */}
             {topScores.length > 3 && (
-              <div className="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl mb-8 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-100">
+                    <thead className="bg-gray-100 dark:bg-gray-700">
                       <tr>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Rang</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Joueur</th>
-                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600">WPM</th>
-                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600">Précision</th>
-                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600">Date</th>
+                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Rang</th>
+                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Joueur</th>
+                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">WPM</th>
+                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">Précision</th>
+                        <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">Date</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                       {topScores.slice(3).map((score, index) => (
-                        <tr key={index + 3} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                        <tr key={index + 3} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                             #{index + 4}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                             {score.playerName || 'Anonyme'}
                           </td>
-                          <td className="px-6 py-4 text-sm text-right font-semibold text-blue-600">
+                          <td className="px-6 py-4 text-sm text-right font-semibold text-blue-600 dark:text-blue-400">
                             {score.wpm.toFixed(1)}
                           </td>
-                          <td className="px-6 py-4 text-sm text-right font-medium text-green-600">
+                          <td className="px-6 py-4 text-sm text-right font-medium text-green-600 dark:text-green-400">
                             {score.accuracy.toFixed(1)}%
                           </td>
-                          <td className="px-6 py-4 text-sm text-right text-gray-500">
+                          <td className="px-6 py-4 text-sm text-right text-gray-500 dark:text-gray-400">
                             {formatDate(score.date)}
                           </td>
                         </tr>
@@ -363,13 +363,13 @@ function Leaderboard({ onBack }) {
 
         <button
           onClick={onBack}
-          className="bg-gray-900 text-white px-8 py-3 rounded-xl text-lg font-semibold hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-xl hover:shadow-2xl inline-flex items-center gap-3"
+          className="bg-gray-900 dark:bg-gray-700 text-white px-8 py-3 rounded-xl text-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-600 transform hover:scale-105 transition-all duration-200 shadow-xl hover:shadow-2xl inline-flex items-center gap-3"
         >
           <ArrowLeft className="w-5 h-5" />
           Retour
         </button>
 
-        <p className="text-gray-500 text-sm mt-6">
+        <p className="text-gray-500 dark:text-gray-400 text-sm mt-6">
           Appuyez sur Échap pour revenir
         </p>
       </div>

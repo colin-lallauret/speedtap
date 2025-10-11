@@ -3,6 +3,7 @@ import HomePage from './components/HomePage';
 import GamePage from './components/GamePage';
 import Leaderboard from './components/Leaderboard';
 import MobileWarning from './components/MobileWarning';
+import ThemeToggle from './components/ThemeToggle';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home'); // 'home', 'game', 'leaderboard'
@@ -61,7 +62,12 @@ function App() {
     }
   };
 
-  return <>{renderCurrentPage()}</>;
+  return (
+    <>
+      <ThemeToggle />
+      {renderCurrentPage()}
+    </>
+  );
 }
 
 export default App;

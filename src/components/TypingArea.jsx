@@ -247,7 +247,7 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
         } else if (index === userInput.length && hasError) {
           className += ' text-white bg-red-500 animate-error-blink';
         } else {
-          className += ' text-gray-900';
+          className += ' text-gray-900 dark:text-gray-100';
         }
 
         return (
@@ -264,7 +264,7 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
           </div>
           {!hasError && (
             <span
-              className={`absolute w-0.5 bg-black ${!isTyping ? 'animate-pulse' : ''}`}
+              className={`absolute w-0.5 bg-black dark:bg-white ${!isTyping ? 'animate-pulse' : ''}`}
               style={{
                 left: `${cursorPosition.left}px`,
                 top: `${cursorPosition.top + 2}px`, // Réduction de l'ajustement (2px au lieu de 6px)
@@ -300,7 +300,7 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
         } else if (globalIndex === userInput.length && hasError) {
           className += ' text-white bg-red-500 animate-error-blink';
         } else {
-          className += ' text-gray-900';
+          className += ' text-gray-900 dark:text-gray-100';
         }
 
         return (
@@ -322,7 +322,7 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
         } else if (spaceIndex === userInput.length && hasError) {
           spaceClassName += ' text-white bg-red-500 animate-error-blink';
         } else {
-          spaceClassName += ' text-gray-900';
+          spaceClassName += ' text-gray-900 dark:text-gray-100';
         }
 
         lineChars.push(
@@ -369,7 +369,7 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
               } else if (globalIndex === userInput.length && hasError) {
                 className += ' text-white bg-red-500 animate-error-blink';
               } else {
-                className += ' text-gray-900';
+                className += ' text-gray-900 dark:text-gray-100';
               }
 
               return (
@@ -391,7 +391,7 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
               } else if (spaceIndex === userInput.length && hasError) {
                 spaceClassName += ' text-white bg-red-500 animate-error-blink';
               } else {
-                spaceClassName += ' text-gray-900';
+                spaceClassName += ' text-gray-900 dark:text-gray-100';
               }
 
               lineChars.push(
@@ -411,7 +411,7 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
         {/* Curseur d'insertion avec position fluide - hauteur fixe */}
         {!hasError && (
           <span
-            className={`absolute w-0.5 bg-black ${!isTyping ? 'animate-pulse' : ''}`}
+            className={`absolute w-0.5 bg-black dark:bg-white ${!isTyping ? 'animate-pulse' : ''}`}
             style={{
               left: `${cursorPosition.left}px`,
               top: `${cursorPosition.top}px`,
@@ -428,16 +428,16 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
   return (
     <div className="w-full max-w-3xl mx-auto">
       <div className="mb-6 flex justify-between items-center">
-        <div className="text-gray-600 text-lg font-medium">
+        <div className="text-gray-600 dark:text-gray-300 text-lg font-medium">
           Temps restant
         </div>
         <div className="flex items-center gap-6">
-          <div className="text-4xl font-bold text-gray-900">
+          <div className="text-4xl font-bold text-gray-900 dark:text-white">
             {timeLeft}s
           </div>
           <button
             onClick={onRestart}
-            className="bg-gray-900 text-white p-3 rounded-lg hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="bg-gray-900 dark:bg-gray-700 text-white p-3 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
             title="Recommencer"
           >
             <RotateCcw className="w-5 h-5" />
@@ -445,10 +445,10 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 h-[200px] flex items-start relative">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 mb-6 h-[200px] flex items-start relative transition-colors duration-300">
         {/* Indicateur Caps Lock avec animation fluide */}
         <div 
-          className={`absolute top-4 right-4 flex items-center gap-2 bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
+          className={`absolute top-4 right-4 flex items-center gap-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-2 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
             isCapsLockOn ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
           }`}
         >
@@ -463,7 +463,7 @@ function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRes
         </div>
       </div>
 
-      <p className="text-gray-500 text-lg mt-4 text-center font-medium">
+      <p className="text-gray-500 dark:text-gray-400 text-lg mt-4 text-center font-medium">
         Commencez a taper pour demarrer le chronometre
       </p>
     </div>
