@@ -1,4 +1,4 @@
-ort { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RotateCcw, KeySquare } from 'lucide-react';
 
 function TypingArea({ text, userInput, onKeyPress, timeLeft, isGameActive, onRestart, hasError }) {
