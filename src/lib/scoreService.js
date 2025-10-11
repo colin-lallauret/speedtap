@@ -27,9 +27,10 @@ class ScoreService {
     }
   }
 
-  // Vérifier si un score mérite d'être dans le top 3
+  // Vérifier si un score mérite d'être dans le top 3 (général OU du jour)
   async isTopScore(wpm, accuracy) {
     try {
+      // Vérifier le top 3 de tous les temps
       const currentTopScores = await this.getTopScores()
       
       // Si moins de 3 scores, c'est automatiquement un top score
@@ -37,13 +38,30 @@ class ScoreService {
         return true
       }
 
-      // Vérifier si le score est meilleur que le 3ème
+      // Vérifier si le score est meilleur que le 3ème du classement général
       const thirdPlace = currentTopScores[2]
       
       // Comparer d'abord par WPM, puis par précision
       if (wpm > thirdPlace.wpm) {
         return true
       } else if (wpm === thirdPlace.wpm && accuracy > thirdPlace.accuracy) {
+        return true
+      }
+
+      // Vérifier également le top 3 du jour (dernières 24h)
+      const todayTopScores = await this.getTodayTopScores()
+      
+      // Si moins de 3 scores aujourd'hui, c'est un top score du jour
+      if (todayTopScores.length < 3) {
+        return true
+      }
+
+      // Vérifier si le score est meilleur que le 3ème du jour
+      const thirdPlaceToday = todayTopScores[2]
+      
+      if (wpm > thirdPlaceToday.wpm) {
+        return true
+      } else if (wpm === thirdPlaceToday.wpm && accuracy > thirdPlaceToday.accuracy) {
         return true
       }
 
